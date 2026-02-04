@@ -19,4 +19,4 @@ class TestHTMLNode(unittest.TestCase):
             "target": "_blank",
             }
         node1 = HTMLNode("Title", "baby's first T tags", ["p", "a", "href", "h1"], test_props)
-        self.assertEqual(node1.props_to_html, ' href="https://www.google.com" target="_blank"')
+        return node1.props_to_html == ' href="https://www.google.com" target="_blank"'

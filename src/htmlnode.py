@@ -10,12 +10,13 @@ class HTMLNode:
     
     def props_to_html(self):
         html_string = ""
-        if self.props is None:
-            return html_string
-        else:
+        if self.props is not None:
             for prop in self.props.keys():
                 html_string.append(f' {prop}=\"{self.props[prop]}\"')
         return html_string
     
     def __repr__(self):
         return f'tag: {self.tag}\nvalue: {self.value}\nchildren: {self.children}\nprops = {self.props}'
+    
+    def __eq__(self, other):
+        return self.tag == other.tag and self.value == other.value and self.children == other.children and self.props == other.props
