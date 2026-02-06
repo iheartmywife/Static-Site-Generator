@@ -1,6 +1,7 @@
 import unittest
 
-from textnode import TextNode, TextType, text_node_to_html_node, split_nodes_delimiter
+from textnode import TextNode, TextType, text_node_to_html_node
+from inline_markdown import split_nodes_delimiter, extract_markdown_images, extract_markdown_links
 
 
 class TestTextNode(unittest.TestCase):
@@ -127,6 +128,48 @@ class TestTextNode(unittest.TestCase):
         new_nodes = split_nodes_delimiter(old_nodes, "**", TextType.BOLD)
         self.assertEqual(new_nodes, desired_outcome)
 
+    def test_extract_markdown_images_one(self):
+        pre_regex_text = f'![this is test alt text for our function](image link)'
+        post_regex_text = [("this is test alt text for our function", "image link")]
+
+        self.assertEqual(
+            extract_markdown_images(pre_regex_text), 
+            post_regex_text)
+
+    def test_extract_markdown_images_two(self):
+        
+        pre_regex_text_two = f'[this is test alt text for our function](image link)'
+        post_regex_text_two = []
+
+        self.assertEqual(
+            extract_markdown_images(pre_regex_text_two), 
+            post_regex_text_two)
+        
+    def test_extract_markdown_images_three(self): #feeding multiple links
+        pre_regex_text = f'![this is test alt text for our function](image link). ![this is test alt text for our function](image link). ![this is test alt text for our function](image link)'
+        post_regex_text = [("this is test alt text for our function", "image link"), ("this is test alt text for our function", "image link"), ("this is test alt text for our function", "image link")]
+
+        self.assertEqual(
+            extract_markdown_images(pre_regex_text), 
+            post_regex_text)
+
+    def test_extract_markdown_links_one(self):
+        pre_regex_text = f'[this is test alt text for our function](link)'
+        post_regex_text = [("this is test alt text for our function", "link")]
+        self.assertEqual(post_regex_text, extract_markdown_links(pre_regex_text))
+
+
+    def test_extract_markdown_links_two(self):
+        pre_regex_text_two = f'![this is test alt text for our function](link)'
+        post_regex_text_two = []
+        self.assertEqual(post_regex_text_two, extract_markdown_links(pre_regex_text_two))
+
+    def test_extract_markdown_links_three(self): #feeding multiple links
+        pre_regex_text = f'[this is test alt text for our function](link). [this is test alt text for our function](link). [this is test alt text for our function](link)'
+        post_regex_text = [("this is test alt text for our function", "link"), ("this is test alt text for our function", "link"), ("this is test alt text for our function", "link")]
+        self.assertEqual(
+            extract_markdown_links(pre_regex_text), 
+            post_regex_text)
         """
         TextType(Enum):
         TEXT = "text" IMPLEMENTED
