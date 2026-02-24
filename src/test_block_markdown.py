@@ -1,6 +1,6 @@
 import unittest
 
-from block_markdown import markdown_to_blocks, Blocktype, block_to_block_type, markdown_to_html_node
+from block_markdown import markdown_to_blocks, Blocktype, block_to_block_type, markdown_to_html_node, extract_title
 
 class TestBlockMarkdown(unittest.TestCase):
         def test_markdown_to_blocks(self):
@@ -313,3 +313,40 @@ code block line 2
                 "<ol><li>ordered one</li><li>ordered two</li></ol>"
                 "</div>",
             )
+        def test_extract_title(self):
+            md = """
+# This is h1
+
+## This is h2
+
+### This is h3
+
+#### This is h4
+
+##### This is h5
+
+###### This is h6
+"""
+
+            extracted_title = "This is h1"
+            self.assertEqual(extract_title(md), extracted_title)
+
+        def test_extract_title(self):
+            md = """
+## This is h2
+
+### This is h3
+
+#### This is h4
+
+##### This is h5
+
+###### This is h6
+"""
+
+            extracted_title = "This is h1"
+            with self.assertRaises(Exception) as cm:
+                extract_title(md)
+            
+            expected_message = "there is no header text"
+            self.assertEqual(str(cm.exception), expected_message)

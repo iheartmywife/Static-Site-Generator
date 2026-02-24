@@ -37,6 +37,7 @@ def determine_blocktype_specific_tag(blocktype, text):
                 return "h5"
             if text.startswith("###### "):
                 return "h6"
+    return
 
 
 def block_to_block_type(markdown):
@@ -181,3 +182,11 @@ def determine_children(block_text, block_type=None):
             html_n = text_node_to_html_node(tn)
             html_nodes.append(html_n)
     return html_nodes
+
+def extract_title(markdown):
+    blocks = markdown_to_blocks(markdown)
+    for block in blocks:
+        if block.startswith("# "):
+            return block[2:]
+        
+    raise Exception("there is no header text")
