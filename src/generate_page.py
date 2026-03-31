@@ -3,7 +3,7 @@ from pathlib import Path
 
 from block_markdown import markdown_to_html_node, extract_title
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, basepath):
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
 
     with open(from_path, "r", encoding="utf-8") as f:
@@ -15,7 +15,10 @@ def generate_page(from_path, template_path, dest_path):
     html = html_node.to_html()
     title = extract_title(md)
 
-    final_output = tmp.replace(f"{{{{ Content }}}}", html, 1).replace(f"{{{{ Title }}}}", title, 1)
+    final_output = tmp.replace(f"{{{{ Content }}}}", html, 1).replace(
+        f"{{{{ Title }}}}", title, 1).replace(
+        f'href="/', f'href="{basepath}').replace(
+        f'src="/', f'src="{basepath}')
 
     dest_dir = os.path.dirname(dest_path)
     if dest_dir:
@@ -24,12 +27,12 @@ def generate_page(from_path, template_path, dest_path):
     with open(dest_path, "w", encoding="utf-8") as f:
         f.write(final_output)
     
-def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, basepath):
     for filename in os.listdir(dir_path_content):
         from_path = os.path.join(dir_path_content, filename)
         dest_path = os.path.join(dest_dir_path, filename)
         if os.path.isfile(from_path):
             dest_path = Path(dest_path).with_suffix(".html")
-            generate_page(from_path, template_path, dest_path)
+            generate_page(from_path, template_path, dest_path, basepath)
         else:
-            generate_pages_recursive(from_path, template_path, dest_path)
+            generate_pages_recursive(from_path, template_path, dest_path, basepath)
